@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+void sort(double *arr, int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] > arr[j]) {
+                double temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+}
+
+double calculate_mean(double *arr, int n) {
+    double sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+    }
+    return sum / n;
+}
+
+double calculate_median(double *arr, int n) {
+    sort(arr, n);
+    if (n % 2 == 0) {
+        return (arr[n/2 - 1] + arr[n/2]) / 2;
+    } else {
+        return arr[n/2];
+    }
+}
+
+double calculate_standard_deviation(double *arr, int n, double mean) {
+    double sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += pow(arr[i] - mean, 2);
+    }
+    return sqrt(sum / n);
+}
+
+int main() {
+    int n;
+    printf("Digite a quantidade de valores: ");
+    scanf("%d", &n);
+
+    if (n <= 0) {
+        printf("A quantidade de valores deve ser maior que zero.\n");
+        return 1;
+    }
+
+    double *values = (double *)malloc(n * sizeof(double));
+    if (values == NULL) {
+        printf("Erro ao alocar memória.\n");
+        return 1;
+    }
+
+    printf("Digite os %d valores:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%lf", &values[i]);
+    }
+
+    double max = values[0];
+    double min = values[0];
+    for (int i = 1; i < n; i++) {
+        if (values[i] > max) {
+            max = values[i];
+        }
+        if (values[i] < min) {
+            min = values[i];
+        }
+    }
+
+    double mean = calculate_mean(values, n);
+    double median = calculate_median(values, n);
+    double std_dev = calculate_standard_deviation(values, n, mean);
+
+    printf("Valor Máximo: %.2lf\n", max);
+    printf("Valor Mínimo: %.
