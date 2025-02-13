@@ -2,86 +2,93 @@
 #include <stdlib.h>
 #include <math.h>
 
-void ordenar(int *arr, int n) {
-    int i, j, temp;
-    for (i = 0; i < n-1; i++) {
-        for (j = i+1; j < n; j++) {
-            if (arr[i] > arr[j]) {
-                temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
-            }
-        }
-    }
-}
-
-double calcular_media(int *arr, int n) {
-    double soma = 0.0;
-    for (int i = 0; i < n; i++) {
-        soma += arr[i];
-    }
-    return soma / n;
-}
-
-double calcular_desvio_padrao(int *arr, int n, double media) {
-    double soma = 0.0;
-    for (int i = 0; i < n; i++) {
-        soma += pow(arr[i] - media, 2);
-    }
-    return sqrt(soma / n);  // Desvio padrão populacional
-}
-
-double calcular_mediana(int *arr, int n) {
-    ordenar(arr, n);
-    if (n % 2 == 0) {
-        return (arr[n/2 - 1] + arr[n/2]) / 2.0;
-    } else {
-        return arr[n/2];
-    }
-}
-
 int main() {
-    int n;
+    int N;
+    double *numeros;
 
-   
-    printf("Digite o número de elementos: ");
-    scanf("%d", &n);
+    // Obtém a quantidade de números
+    printf("Quantos números na sua série (N): ");
+    scanf("%d", &N);
 
-   
-    int *arr = (int *)malloc(n * sizeof(int));
-    if (arr == NULL) {
-        printf("Erro ao alocar memória.\n");
+    // Aloca memória dinamicamente para os números
+    numeros = (double *)malloc(N * sizeof(double));
+
+    // Verifica se a alocação de memória foi bem-sucedida
+    if (numeros == NULL) {
+        printf("Erro na alocação de memória.\n");
         return 1;
     }
 
-  
-    printf("Digite os %d números: ", n);
-    for (int i = 0; i < n; i++) {
-        scanf("%d", &arr[i]);
+    // Obtém os números da série
+    printf("Entre com números: \n");
+    for (int i = 0; i < N; i++) {
+        printf("> ");
+        scanf("%lf", &numeros[i]);
     }
 
-  
-    int max = arr[0], min = arr[0];
-    for (int i = 1; i < n; i++) {
-        if (arr[i] > max) max = arr[i];
-        if (arr[i] < min) min = arr[i];
+    // Calcula o valor mínimo
+    double minimo = numeros[0];
+    for (int i = 1; i < N; i++) {
+        if (numeros[i] < minimo) {
+            minimo = numeros[i];
+        }
     }
 
-    double media = calcular_media(arr, n);
-    double desvio_padrao = calcular_desvio_padrao(arr, n, media);
-    double mediana = calcular_mediana(arr, n);
+    // Calcula o valor máximo
+    double maximo = numeros[0];
+    for (int i = 1; i < N; i++) {
+        if (numeros[i] > maximo) {
+            maximo = numeros[i];
+        }
+    }
 
-   
-    printf("\nResultados:\n");
-    printf("Máximo: %d\n", max);
-    printf("Mínimo: %d\n", min);
-    printf("Média: %.2f\n", media);
-    printf("Mediana: %.2f\n", mediana);
-    printf("Desvio Padrão: %.2f\n", desvio_padrao);
+    // Calcula a média
+    double soma = 0;
+    for (int i = 0; i < N; i++) {
+        soma += numeros[i];
+    }
+    double media = soma / N;
 
-   
-    free(arr);
+    // Calcula a mediana
+    double *numeros_ordenados = (double *)malloc(N * sizeof(double));
+    for (int i = 0; i < N; i++) {
+        numeros_ordenados[i] = numeros[i];
+    }
+    // Ordena os números usando o algoritmo Bubble Sort
+    for (int i = 0; i < N - 1; i++) {
+        for (int j = 0; j < N - i - 1; j++) {
+            if (numeros_ordenados[j] > numeros_ordenados[j + 1]) {
+                double temp = numeros_ordenados[j];
+                numeros_ordenados[j] = numeros_ordenados[j + 1];
+                numeros_ordenados[j + 1] = temp;
+            }
+        }
+    }
+    double mediana;
+    if (N % 2 == 0) {
+        mediana = (numeros_ordenados[N / 2 - 1] + numeros_ordenados[N / 2]) / 2;
+    } else {
+        mediana = numeros_ordenados[N / 2];
+    }
+    free(numeros_ordenados);
+
+    // Calcula o desvio padrão populacional
+    double soma_diff_quad = 0;
+    for (int i = 0; i < N; i++) {
+        double diff = numeros[i] - media;
+        soma_diff_quad += diff * diff;
+    }
+    double desvio_padrao = sqrt(soma_diff_quad / N);
+
+    // Imprime os resultados
+    printf("Valor mínimo: %.1lf\n", minimo);
+    printf("Valor Máximo: %.1lf\n", maximo);
+    printf("Média: %.2lf\n", media);
+    printf("Mediana: %.2lf\n", mediana);
+    printf("Desvio padrão: %lf\n", desvio_padrao);
+
+    // Libera a memória alocada dinamicamente
+    free(numeros);
 
     return 0;
 }
-
